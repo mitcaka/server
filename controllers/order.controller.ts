@@ -9,7 +9,7 @@ import NotificationModel from "../models/notification.model";
 import path from "path";
 import ejs from "ejs";
 import { redis } from "../utils/redis";
-import { newOrder } from "../services/order.service";
+import { getAllOrdersService, newOrder } from "../services/order.service";
 require("dotenv").config();
 
 //create order
@@ -89,6 +89,17 @@ export const createOrder = CatchAsyncError(
     } catch (error: any) {
       console.log(error);
       return next(new ErrorHandle(error.message, 400));
+    }
+  }
+);
+
+// get All orders --- admin
+export const getAllOrders = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      getAllOrdersService(res);
+    } catch (error: any) {
+      return next(new ErrorHandle(error.message, 500));
     }
   }
 );

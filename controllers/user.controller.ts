@@ -13,7 +13,11 @@ import {
   sendToken,
 } from "../utils/jwt";
 import { redis } from "../utils/redis";
-import { getUserById } from "../services/user.service";
+import {
+  getAllUsersService,
+  getUserById,
+  updateUserRoleService,
+} from "../services/user.service";
 import cloudinary from "cloudinary";
 
 //register user
@@ -195,7 +199,7 @@ export const updateAccessToken = CatchAsyncError(
       }
       const session = await redis.get(decoded.id as string);
       if (!session) {
-        return next(new ErrorHandle(message, 400));
+        return next(new ErrorHandle("Please Login to access resource", 400));
       }
       const user = JSON.parse(session);
       const accessToken = jwt.sign(
@@ -217,6 +221,7 @@ export const updateAccessToken = CatchAsyncError(
 
       res.cookie("access_token", accessToken, accessTokenOptions);
       res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+      await redis.set(user._id, JSON.stringify(user), "EX", 604800);
       res.status(200).json({
         status: "success",
         accessToken,
@@ -358,9 +363,9 @@ export const updateAvatar = CatchAsyncError(
       const user = await userModel.findById(userId).select("+password");
 
       if (avatar && user) {
-        // if user have one avatar then call this if
+        // if user have one avatar
         if (user?.avatar?.public_id) {
-          // first delete the old image
+          // delete the old image
           await cloudinary.v2.uploader.destroy(user?.avatar?.public_id);
 
           const myCloud = await cloudinary.v2.uploader.upload(avatar, {
@@ -393,6 +398,64 @@ export const updateAvatar = CatchAsyncError(
       });
     } catch (error: any) {
       console.log(error);
+      return next(new ErrorHandle(error.message, 400));
+    }
+  }
+);
+
+// get all users -- admin
+export const getAllUsers = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      getAllUsersService(res);
+    } catch (error: any) {
+      return next(new ErrorHandle(error.message, 400));
+    }
+  }
+);
+
+// update user role --- admin
+export const updateUserRole = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, role } = req.body;
+      const isUserExist = await userModel.findOne({ email });
+      if (isUserExist) {
+        const id = isUserExist._id;
+        updateUserRoleService(res, id as string, role);
+      } else {
+        res.status(400).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+    } catch (error: any) {
+      return next(new ErrorHandle(error.message, 400));
+    }
+  }
+);
+
+// Delete user --- admin
+export const deleteUser = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+
+      const user = await userModel.findById(id);
+
+      if (!user) {
+        return next(new ErrorHandle("User not found", 404));
+      }
+
+      await user.deleteOne({ id });
+
+      await redis.del(id);
+
+      res.status(200).json({
+        success: true,
+        message: "User deleted successfully",
+      });
+    } catch (error: any) {
       return next(new ErrorHandle(error.message, 400));
     }
   }
