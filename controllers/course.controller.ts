@@ -204,8 +204,8 @@ export const addQuestion = CatchAsyncError(
       //add notification
       await NotificationModel.create({
         user: req.user?._id,
-        title: "New Question",
-        message: `You have a new question in ${course?.name}`,
+        title: "Câu hỏi mới",
+        message: `Bạn có câu hỏi mới trong khóa học ${course?.name}`,
       });
 
       //save data
@@ -275,8 +275,8 @@ export const addAnswer = CatchAsyncError(
         //create a notification
         await NotificationModel.create({
           user: req.user?._id,
-          title: "New Question Reply Received",
-          message: `You have a new question reply in ${courseContent.title}`,
+          title: "Câu trả lời mới",
+          message: `Bạn nhận được câu trả lời trong khóa học ${courseContent.title}`,
         });
       } else {
         const data = {
@@ -365,8 +365,8 @@ export const addReview = CatchAsyncError(
       // create notification
       await NotificationModel.create({
         user: req.user?._id,
-        title: "New Review Received",
-        message: `${req.user?.name} has given a review in ${course?.name}`,
+        title: "Đánh giá mới",
+        message: `${req.user?.name} đã đánh giá khóa học ${course?.name}`,
       });
 
       res.status(200).json({
