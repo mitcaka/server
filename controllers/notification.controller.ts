@@ -29,7 +29,7 @@ export const updateNotification = CatchAsyncError(
     try {
       const notification = await NotificationModel.findById(req.params.id);
       if (!notification) {
-        return next(new ErrorHandle("Notification not found", 404));
+        return next(new ErrorHandle("Không tìm thấy thông báo", 404));
       } else {
         notification.status
           ? (notification.status = "read")
@@ -67,5 +67,5 @@ cron.schedule("0 0 0 * * *", async () => {
     status: "read",
     createdAt: { $lt: thirtyDaysAgo },
   });
-  console.log("Deleted read notifications");
+  console.log("Đã xóa thông báo đã đọc");
 });

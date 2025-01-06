@@ -11,7 +11,7 @@ export const createLayout = CatchAsyncError(
       const { type } = req.body;
       const isTypeExist = await LayoutModel.findOne({ type });
       if (isTypeExist) {
-        return next(new ErrorHandle(`${type} already exist`, 400));
+        return next(new ErrorHandle(`${type} đã tồn tại`, 400));
       }
       if (type === "Banner") {
         const { image, title, subTitle } = req.body;
@@ -60,7 +60,7 @@ export const createLayout = CatchAsyncError(
 
       res.status(200).json({
         success: true,
-        message: "Layout created successfully",
+        message: "Dữ liệu tạo thành công",
       });
     } catch (error: any) {
       return next(new ErrorHandle(error.message, 500));
@@ -137,7 +137,7 @@ export const editLayout = CatchAsyncError(
 
       res.status(200).json({
         success: true,
-        message: "Layout Updated successfully",
+        message: "Cập nhật dữ liệu thành công",
       });
     } catch (error: any) {
       return next(new ErrorHandle(error.message, 500));

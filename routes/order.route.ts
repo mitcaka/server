@@ -1,17 +1,23 @@
 import express from "express";
 import { authorizeRoles, isAuthentication } from "../middleware/auth";
-import { createOrder, getAllOrders, newPayment, sendStripePublishableKey } from "../controllers/order.controller";
+import {
+  createOrder,
+  getAllOrders,
+  newPayment,
+  sendStripePublishableKey,
+  createMobileOrder,
+} from "../controllers/order.controller";
 const orderRouter = express.Router();
 
 orderRouter.post("/create-order", isAuthentication, createOrder);
 
-// orderRouter.post("/create-mobile-order", isAuthentication, createMobileOrder);
+orderRouter.post("/create-mobile-order", isAuthentication, createMobileOrder);
 
 orderRouter.get(
   "/get-orders",
   isAuthentication,
   authorizeRoles("admin"),
-  getAllOrders
+  getAllOrders,
 );
 
 orderRouter.get("/payment/stripepublishablekey", sendStripePublishableKey);

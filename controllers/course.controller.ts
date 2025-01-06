@@ -239,7 +239,7 @@ export const addAnswer = CatchAsyncError(
       const course = await CourseModel.findById(courseId);
 
       if (!mongoose.Types.ObjectId.isValid(contentId)) {
-        return next(new ErrorHandle("Invalid content id", 400));
+        return next(new ErrorHandle("ID nội dung không hợp lệ", 400));
       }
 
       const courseContent = course?.courseData?.find((item: any) =>
@@ -247,7 +247,7 @@ export const addAnswer = CatchAsyncError(
       );
 
       if (!courseContent) {
-        return next(new ErrorHandle("Invalid content id", 400));
+        return next(new ErrorHandle("ID nội dung không hợp lệ", 400));
       }
 
       const question = courseContent?.questions?.find((item: any) =>
@@ -255,7 +255,7 @@ export const addAnswer = CatchAsyncError(
       );
 
       if (!question) {
-        return next(new ErrorHandle("Invalid question id", 400));
+        return next(new ErrorHandle("Mã câu hỏi không hợp lệ", 400));
       }
 
       // create a new answer object
@@ -332,7 +332,7 @@ export const addReview = CatchAsyncError(
 
       if (!courseExists) {
         return next(
-          new ErrorHandle("You are not eligible to access this course", 404)
+          new ErrorHandle("Bạn không đủ điều kiện để truy cập khóa học này", 404)
         );
       }
 
@@ -393,7 +393,7 @@ export const addReplyToReview = CatchAsyncError(
       const course = await CourseModel.findById(courseId);
 
       if (!course) {
-        return next(new ErrorHandle("Course not found", 404));
+        return next(new ErrorHandle("Không tìm thấy khóa học", 404));
       }
 
       const review = course?.reviews?.find(
@@ -401,7 +401,7 @@ export const addReplyToReview = CatchAsyncError(
       );
 
       if (!review) {
-        return next(new ErrorHandle("Review not found", 404));
+        return next(new ErrorHandle("Không tìm thấy đánh giá", 404));
       }
 
       const replyData: any = {
@@ -451,7 +451,7 @@ export const deleteCourse = CatchAsyncError(
       const course = await CourseModel.findById(id);
 
       if (!course) {
-        return next(new ErrorHandle("course not found", 404));
+        return next(new ErrorHandle("khóa học không tìm thấy", 404));
       }
 
       await course.deleteOne({ id });
@@ -460,7 +460,7 @@ export const deleteCourse = CatchAsyncError(
 
       res.status(200).json({
         success: true,
-        message: "course deleted successfully",
+        message: "Khóa học đã xóa thành công",
       });
     } catch (error: any) {
       return next(new ErrorHandle(error.message, 400));
