@@ -27,8 +27,11 @@ export const uploadCourse = CatchAsyncError(
           url: myCloud.secure_url,
         };
       }
-
-      createCourse(data, res, next);
+      if(data.thumbnail.public_id && data.thumbnail.url){
+        createCourse(data, res, next);
+      }
+      else console.log("Error in create");
+      
     } catch (error: any) {
       console.log(error);
       return next(new ErrorHandle(error.message, 400));

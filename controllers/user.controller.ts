@@ -188,14 +188,9 @@ export const logoutUser = CatchAsyncError(
 export const updateAccessToken = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // let refresh_token = req.cookies.refresh_token as string;
-      // if(!refresh_token){
-      //   refresh_token = req.headers["refresh-token"] as string;
-      // }
-
       const refresh_token =
       req.cookies.refresh_token || req.headers["refresh-token"];
-
+      
       const decoded = jwt.verify(
         refresh_token,
         process.env.REFRESH_TOKEN as string
@@ -225,14 +220,13 @@ export const updateAccessToken = CatchAsyncError(
         }
       );
       req.user = user;
-
-      res.cookie("access_token", accessToken, accessTokenOptions);
-      res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+      if(req.cookies.refresh_token){
+        res.cookie("access_token", accessToken, accessTokenOptions);
+        res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+      }
       await redis.set(user._id, JSON.stringify(user), "EX", 604800);
-      res.status(200).json({
-        status: "success",
-        accessToken,
-      });
+
+      return next();
     } catch (error: any) {
       return next(new ErrorHandle(error.message, 400));
     }

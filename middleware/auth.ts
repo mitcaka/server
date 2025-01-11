@@ -9,12 +9,6 @@ import { updateAccessToken } from "../controllers/user.controller";
 //authenticated user
 export const isAuthentication = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-    // let access_token = req.cookies.access_token;
-
-    // if (!access_token) {
-    //   access_token = req.headers["access-token"] as string;
-    // }
-
     const access_token =
       req.cookies.access_token || req.headers["access-token"];
 
@@ -30,13 +24,13 @@ export const isAuthentication = CatchAsyncError(
     // check if the access token is expired
     if (decoded.exp && decoded.exp <= Date.now() / 1000) {
       try {
+        console.log("đang update token"); 
         await updateAccessToken(req, res, next);
       } catch (error) {
-        return next(error);
+        return next(error);  
       }
     } else {
       const user = await redis.get(decoded.id);
-
       if (!user) {
         return next(
           new ErrorHandle("Vui lòng đăng nhập để truy cập", 400),
