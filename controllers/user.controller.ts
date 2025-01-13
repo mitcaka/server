@@ -225,7 +225,6 @@ export const updateAccessToken = CatchAsyncError(
         res.cookie("refresh_token", refreshToken, refreshTokenOptions);
       }
       await redis.set(user._id, JSON.stringify(user), "EX", 604800);
-
       return next();
     } catch (error: any) {
       return next(new ErrorHandle(error.message, 400));
@@ -256,8 +255,14 @@ export const socialAuth = CatchAsyncError(
     try {
       const { email, name, avatar } = req.body as ISocialAuthBody;
       const user = await userModel.findOne({ email });
+
+      const avatarData = avatar || {
+        public_id: "avatar_nj6fct",
+        url: "https://res.cloudinary.com/dhkplxuxb/image/upload/v1736780625/avatar_nj6fct.png",
+      };
+
       if (!user) {
-        const newUser = await userModel.create({ email, name, avatar });
+        const newUser = await userModel.create({ email, name, avatar: avatarData });
         sendToken(newUser, 200, res);
       } else {
         sendToken(user, 200, res);

@@ -133,8 +133,9 @@ export const sendStripePublishableKey = CatchAsyncError(
 export const newPayment = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const rate = 0.000039;
       const myPayment = await stripe.paymentIntents.create({
-        amount: req.body.amount,
+        amount: req.body.amount*rate,
         currency: "USD",
         metadata: {
           company: "SmartEdu",
