@@ -27,16 +27,14 @@ export const uploadCourse = CatchAsyncError(
           url: myCloud.secure_url,
         };
       }
-      if(data.thumbnail.public_id && data.thumbnail.url){
+      if (data.thumbnail.public_id && data.thumbnail.url) {
         createCourse(data, res, next);
-      }
-      else console.log("Error in create");
-      
+      } else console.log("Error in create");
     } catch (error: any) {
       console.log(error);
       return next(new ErrorHandle(error.message, 400));
     }
-  }
+  },
 );
 
 //edit course
@@ -44,11 +42,13 @@ export const editCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = req.body;
+
       const thumbnail = data.thumbnail;
 
       const courseId = req.params.id;
 
       const courseData = (await CourseModel.findById(courseId)) as any;
+
       if (thumbnail && !thumbnail.startsWith("https")) {
         await cloudinary.v2.uploader.destroy(courseData.thumbnail.public_id);
 
@@ -62,19 +62,19 @@ export const editCourse = CatchAsyncError(
         };
       }
 
-      //   if (thumbnail.startsWith("https")) {
-      //     data.thumbnail = {
-      //       public_id: courseData?.thumbnail.public_id,
-      //       url: courseData?.thumbnail.url,
-      //     };
-      //   }
+      if (thumbnail.startsWith("https")) {
+        data.thumbnail = {
+          public_id: courseData?.thumbnail.public_id,
+          url: courseData?.thumbnail.url,
+        };
+      }
 
       const course = await CourseModel.findByIdAndUpdate(
         courseId,
         {
           $set: data,
         },
-        { new: true }
+        { new: true },
       );
 
       res.status(201).json({
@@ -82,10 +82,9 @@ export const editCourse = CatchAsyncError(
         course,
       });
     } catch (error: any) {
-      console.log(error);
-      return next(new ErrorHandle(error.message, 400));
+      return next(new ErrorHandle(error.message, 500));
     }
-  }
+  },
 );
 
 // get single course --- without purchasing
@@ -104,7 +103,7 @@ export const getSingleCourse = CatchAsyncError(
         });
       } else {
         const course = await CourseModel.findById(req.params.id).select(
-          "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
+          "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links",
         );
 
         await redis.set(courseId, JSON.stringify(course), "EX", 604800); // 7days
@@ -117,7 +116,7 @@ export const getSingleCourse = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandle(error.message, 500));
     }
-  }
+  },
 );
 
 // get all courses --- without purchasing
@@ -125,7 +124,7 @@ export const getAllCourses = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const courses = await CourseModel.find().select(
-        "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
+        "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links",
       );
 
       res.status(200).json({
@@ -135,7 +134,7 @@ export const getAllCourses = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandle(error.message, 500));
     }
-  }
+  },
 );
 
 // get course content -- only for valid user
@@ -146,12 +145,12 @@ export const getCourseByUser = CatchAsyncError(
       const courseId = req.params.id;
 
       const courseExists = userCourseList?.find(
-        (course: any) => course._id.toString() === courseId
+        (course: any) => course._id.toString() === courseId,
       );
 
       if (!courseExists) {
         return next(
-          new ErrorHandle("You are not eligible to access this course", 404)
+          new ErrorHandle("You are not eligible to access this course", 404),
         );
       }
 
@@ -166,7 +165,7 @@ export const getCourseByUser = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandle(error.message, 500));
     }
-  }
+  },
 );
 
 //add question in course
@@ -187,7 +186,7 @@ export const addQuestion = CatchAsyncError(
       }
 
       const courseContent = course?.courseData?.find((item: any) =>
-        item._id.equals(contentId)
+        item._id.equals(contentId),
       );
 
       if (!courseContent) {
@@ -222,7 +221,7 @@ export const addQuestion = CatchAsyncError(
       console.log(error);
       return next(new ErrorHandle(error.message, 400));
     }
-  }
+  },
 );
 
 //add answer in course
@@ -246,7 +245,7 @@ export const addAnswer = CatchAsyncError(
       }
 
       const courseContent = course?.courseData?.find((item: any) =>
-        item._id.equals(contentId)
+        item._id.equals(contentId),
       );
 
       if (!courseContent) {
@@ -254,7 +253,7 @@ export const addAnswer = CatchAsyncError(
       }
 
       const question = courseContent?.questions?.find((item: any) =>
-        item._id.equals(questionId)
+        item._id.equals(questionId),
       );
 
       if (!question) {
@@ -289,7 +288,7 @@ export const addAnswer = CatchAsyncError(
 
         const html = await ejs.renderFile(
           path.join(__dirname, "../mails/question-reply.ejs"),
-          data
+          data,
         );
 
         try {
@@ -311,7 +310,7 @@ export const addAnswer = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandle(error.message, 500));
     }
-  }
+  },
 );
 
 //add review in course
@@ -330,12 +329,15 @@ export const addReview = CatchAsyncError(
 
       // check if courseId already exists in userCourseList based on _id
       const courseExists = userCourseList?.some(
-        (course: any) => course._id.toString() === courseId.toString()
+        (course: any) => course._id.toString() === courseId.toString(),
       );
 
       if (!courseExists) {
         return next(
-          new ErrorHandle("Bạn không đủ điều kiện để truy cập khóa học này", 404)
+          new ErrorHandle(
+            "Bạn không đủ điều kiện để truy cập khóa học này",
+            404,
+          ),
         );
       }
 
@@ -379,7 +381,7 @@ export const addReview = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandle(error.message, 500));
     }
-  }
+  },
 );
 
 // add reply in review
@@ -400,7 +402,7 @@ export const addReplyToReview = CatchAsyncError(
       }
 
       const review = course?.reviews?.find(
-        (rev: any) => rev._id.toString() === reviewId
+        (rev: any) => rev._id.toString() === reviewId,
       );
 
       if (!review) {
@@ -431,7 +433,7 @@ export const addReplyToReview = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandle(error.message, 500));
     }
-  }
+  },
 );
 
 // get all courses --- admin
@@ -442,7 +444,7 @@ export const getAdminAllCourses = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandle(error.message, 400));
     }
-  }
+  },
 );
 
 // Delete Course --- admin
@@ -468,7 +470,7 @@ export const deleteCourse = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandle(error.message, 400));
     }
-  }
+  },
 );
 
 // generate video url
@@ -485,11 +487,11 @@ export const generateVideoUrl = CatchAsyncError(
             "Content-Type": "application/json",
             Authorization: `Apisecret ${process.env.VDOCIPHER_API_SECRET}`,
           },
-        }
+        },
       );
       res.json(response.data);
     } catch (error: any) {
       return next(new ErrorHandle(error.message, 400));
     }
-  }
+  },
 );

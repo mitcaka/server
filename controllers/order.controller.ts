@@ -3,7 +3,6 @@ import { CatchAsyncError } from "../middleware/catchAsyncErrors";
 import ErrorHandle from "../utils/ErrorHandle";
 import userModel from "../models/user.model";
 import CourseModel, { ICourse } from "../models/course.model";
-import OrderModel, { IOrder } from "../models/order.model";
 import sendMail from "../utils/sendEmail";
 import NotificationModel from "../models/notification.model";
 import path from "path";
@@ -77,7 +76,7 @@ export const createOrder = CatchAsyncError(
         if (user) {
           await sendMail({
             email: user.email,
-            subject: "Order Confirmation",
+            subject: "Đặt hàng thành công",
             template: "order-confirmation.ejs",
             data: mailData,
           });
@@ -109,6 +108,7 @@ export const createOrder = CatchAsyncError(
   },
 );
 
+
 // get All orders --- admin
 export const getAllOrders = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -133,9 +133,8 @@ export const sendStripePublishableKey = CatchAsyncError(
 export const newPayment = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const rate = 0.000039;
       const myPayment = await stripe.paymentIntents.create({
-        amount: req.body.amount*rate,
+        amount: req.body.amount,
         currency: "USD",
         metadata: {
           company: "SmartEdu",
