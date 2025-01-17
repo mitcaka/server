@@ -10,6 +10,7 @@ import orderRouter from "./routes/order.route";
 import notificationRouter from "./routes/notification.route";
 import analyticsRouter from "./routes/analytics.route";
 import layoutRouter from "./routes/layout.route";
+import rateLimit from "express-rate-limit";
 // bode parser
 app.use(express.json({ limit: "50mb" }));
 
@@ -28,13 +29,24 @@ app.use(
   }),
 );
 
-//router
-app.use("/api/v1", userRouter);
-app.use("/api/v1", courseRouter);
-app.use("/api/v1", orderRouter);
-app.use("/api/v1", notificationRouter);
-app.use("/api/v1", analyticsRouter);
-app.use("/api/v1", layoutRouter);
+// api requests limit
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000,
+	max: 100, 
+	standardHeaders: 'draft-7', 
+	legacyHeaders: false, 
+})
+
+// routes
+app.use(
+  "/api/v1",
+  userRouter,
+  orderRouter,
+  courseRouter,
+  notificationRouter,
+  analyticsRouter,
+  layoutRouter
+);
 
 // testing route
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
@@ -51,4 +63,5 @@ app.all("*", (req: Request, res: Response, next: NextFunction) => {
   next(err);
 });
 
+app.use(limiter);
 app.use(ErrorMiddleware);
