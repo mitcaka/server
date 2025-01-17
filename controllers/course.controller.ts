@@ -294,7 +294,7 @@ export const addAnswer = CatchAsyncError(
         try {
           await sendMail({
             email: question.user.email,
-            subject: "Question Reply",
+            subject: "Câu hỏi mới",
             template: "question-reply.ejs",
             data,
           });

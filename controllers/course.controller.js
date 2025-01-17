@@ -225,7 +225,7 @@ exports.addAnswer = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) => 
             try {
                 yield (0, sendEmail_1.default)({
                     email: question.user.email,
-                    subject: "Question Reply",
+                    subject: "Câu hỏi mới",
                     template: "question-reply.ejs",
                     data,
                 });
