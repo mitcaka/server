@@ -9,8 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn --transpile-only server.ts",
-    "start": "node build/server.js",
-    "heroku-postbuild":"NPM_CONFIG_PRODUCTION=false",
+    "start": "node server.js",
     "build":"tsc"
   },
   "author": "Nguyen Mai",
