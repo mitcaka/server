@@ -52,7 +52,7 @@ app.use(
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({
     success: true,
-    message: "API is working",
+    message: "API is working vip pro no1",
   });
 });
 
