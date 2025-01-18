@@ -2,7 +2,7 @@
   "name": "server",
   "version": "1",
   "type": "commonjs",
-  "main": "build/server.js",
+  "main": "server.js",
   "engines": {
     "node": "18.x"
   },
