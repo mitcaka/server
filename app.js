@@ -35,16 +35,16 @@ exports.app.use((0, cors_1.default)({
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000,
     max: 100,
-    standardHeaders: 'draft-7',
+    standardHeaders: "draft-7",
     legacyHeaders: false,
 });
 // routes
 exports.app.use("/api/v1", user_route_1.default, order_route_1.default, course_route_1.default, notification_route_1.default, analytics_route_1.default, layout_route_1.default);
 // testing route
-exports.app.get("/test", (req, res, next) => {
+exports.app.get("/", (req, res, next) => {
     res.status(200).json({
         success: true,
-        message: "API is working",
+        message: "API is working vip pro no1",
     });
 });
 //unknow route

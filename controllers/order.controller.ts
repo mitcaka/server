@@ -53,7 +53,7 @@ export const createOrder = CatchAsyncError(
         userId: user?._id,
         payment_info,
       };
-      const course_Id: string = course._id as string;
+      const course_Id: any = course._id as string;
       const mailData = {
         order: {
           _id: course_Id.toString().slice(0, 6),
@@ -66,8 +66,6 @@ export const createOrder = CatchAsyncError(
           }),
         },
       };
-
-      console.log(mailData);
 
       const html = await ejs.renderFile(
         path.join(__dirname, "../mails/order-confirmation.ejs"),
@@ -87,7 +85,7 @@ export const createOrder = CatchAsyncError(
         return next(new ErrorHandle(error.message, 500));
       }
       
-      user?.courses.push({ courseId: course_Id });
+      user?.courses.push(course_Id);
       const userId = req.user?._id as string;
       await redis.set(userId, JSON.stringify(user));
 

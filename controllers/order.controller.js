@@ -66,7 +66,6 @@ exports.createOrder = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) =
                 }),
             },
         };
-        console.log(mailData);
         const html = yield ejs_1.default.renderFile(path_1.default.join(__dirname, "../mails/order-confirmation.ejs"), { order: mailData });
         try {
             if (user) {
@@ -81,7 +80,7 @@ exports.createOrder = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) =
         catch (error) {
             return next(new ErrorHandle_1.default(error.message, 500));
         }
-        user === null || user === void 0 ? void 0 : user.courses.push({ courseId: course_Id });
+        user === null || user === void 0 ? void 0 : user.courses.push(course_Id);
         const userId = (_b = req.user) === null || _b === void 0 ? void 0 : _b._id;
         yield redis_1.redis.set(userId, JSON.stringify(user));
         yield (user === null || user === void 0 ? void 0 : user.save());

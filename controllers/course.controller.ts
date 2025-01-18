@@ -142,22 +142,24 @@ export const getCourseByUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userCourseList = req.user?.courses;
-      const courseId = req.params.id;
+      const courseId = req.params.id;     
 
-      const courseExists = userCourseList?.find(
-        (course: any) => course._id.toString() === courseId,
-      );
-
-      if (!courseExists) {
-        return next(
-          new ErrorHandle("You are not eligible to access this course", 404),
+      const isAdmin = req.user?.role === "admin";
+  
+      if (!isAdmin) {
+        const courseExists = userCourseList?.find(
+          (course: any) => course._id.toString() === courseId,
         );
+  
+        if (!courseExists) {
+          return next(new ErrorHandle("Bạn chưa mua khóa học này!!", 404));
+        }
       }
 
       const course = await CourseModel.findById(courseId);
-
+      
       const content = course?.courseData;
-
+  
       res.status(200).json({
         success: true,
         content,
@@ -165,7 +167,7 @@ export const getCourseByUser = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandle(error.message, 500));
     }
-  },
+  }
 );
 
 //add question in course

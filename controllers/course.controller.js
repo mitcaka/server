@@ -125,16 +125,23 @@ exports.getAllCourses = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next)
 }));
 // get course content -- only for valid user
 exports.getCourseByUser = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     try {
         const userCourseList = (_a = req.user) === null || _a === void 0 ? void 0 : _a.courses;
         const courseId = req.params.id;
-        const courseExists = userCourseList === null || userCourseList === void 0 ? void 0 : userCourseList.find((course) => course._id.toString() === courseId);
-        if (!courseExists) {
-            return next(new ErrorHandle_1.default("You are not eligible to access this course", 404));
+        console.log("userCourseList ", userCourseList);
+        console.log("courseId", courseId);
+        const isAdmin = ((_b = req.user) === null || _b === void 0 ? void 0 : _b.role) === "admin";
+        if (!isAdmin) {
+            const courseExists = userCourseList === null || userCourseList === void 0 ? void 0 : userCourseList.find((course) => course._id.toString() === courseId);
+            if (!courseExists) {
+                return next(new ErrorHandle_1.default("Bạn chưa mua khóa học này!!", 404));
+            }
         }
         const course = yield course_model_1.default.findById(courseId);
+        console.log("course", course);
         const content = course === null || course === void 0 ? void 0 : course.courseData;
+        console.log(content);
         res.status(200).json({
             success: true,
             content,
