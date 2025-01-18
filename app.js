@@ -27,6 +27,7 @@ exports.app.use((0, cors_1.default)({
         "http://localhost:3000",
         "http://192.168.0.102:8081",
         "http://192.168.0.102:8082",
+        "https://smart-edu-three.vercel.app",
     ],
     credentials: true,
 }));

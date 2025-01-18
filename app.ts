@@ -24,6 +24,7 @@ app.use(
       "http://localhost:3000",
       "http://192.168.0.102:8081",
       "http://192.168.0.102:8082",
+      "https://smart-edu-three.vercel.app",
     ],
     credentials: true,
   }),
@@ -31,11 +32,11 @@ app.use(
 
 // api requests limit
 const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000,
-	max: 100, 
-	standardHeaders: 'draft-7', 
-	legacyHeaders: false, 
-})
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+});
 
 // routes
 app.use(
@@ -45,7 +46,7 @@ app.use(
   courseRouter,
   notificationRouter,
   analyticsRouter,
-  layoutRouter
+  layoutRouter,
 );
 
 // testing route
