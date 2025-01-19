@@ -22,8 +22,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "http://192.168.0.102:8081",
-      "http://192.168.0.102:8082",
+      "http://192.168.244.135:8081",
+      "http://192.168.244.135:8082",
       "https://smart-edu-three.vercel.app",
     ],
     credentials: true,

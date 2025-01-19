@@ -129,8 +129,6 @@ exports.getCourseByUser = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, nex
     try {
         const userCourseList = (_a = req.user) === null || _a === void 0 ? void 0 : _a.courses;
         const courseId = req.params.id;
-        console.log("userCourseList ", userCourseList);
-        console.log("courseId", courseId);
         const isAdmin = ((_b = req.user) === null || _b === void 0 ? void 0 : _b.role) === "admin";
         if (!isAdmin) {
             const courseExists = userCourseList === null || userCourseList === void 0 ? void 0 : userCourseList.find((course) => course._id.toString() === courseId);
@@ -139,9 +137,7 @@ exports.getCourseByUser = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, nex
             }
         }
         const course = yield course_model_1.default.findById(courseId);
-        console.log("course", course);
         const content = course === null || course === void 0 ? void 0 : course.courseData;
-        console.log(content);
         res.status(200).json({
             success: true,
             content,
